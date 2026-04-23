@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sample Brand アンケートLP 追従ヘッダー 叩き台（購入＋詳細）</title>
+<style>
+  :root{
+    --sample-brand:#b08968;       /* Sample Brandブランド近似カラー（仮） */
+    --sample-brand-dark:#8a6748;  /* hover/active */
+    --sample-brand-soft:#f7efe6;  /* 副CTAのhover背景 */
+    --sample-text:#ffffff;
+    --header-height:64px;
+    --header-height-mb:56px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",sans-serif;color:#333;line-height:1.7;}
+
+  /* ===== デモ用ダミーLP ===== */
+  .demo-fv{min-height:60vh;background:linear-gradient(180deg,#f5efe6,#e9dfd0);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:20px;font-weight:bold;padding:40px 20px;text-align:center;gap:12px;}
+  .demo-fv small{font-size:13px;font-weight:normal;color:#6b5d4f;}
+  .demo-section{padding:40px 20px;max-width:480px;margin:0 auto;}
+  .demo-section h2{font-size:18px;margin:0 0 16px;}
+  .demo-section p{margin:0 0 24px;font-size:14px;}
+  .demo-spacer{height:120vh;background:repeating-linear-gradient(180deg,#fafafa 0 80px,#f0ebe3 80px 160px);display:flex;align-items:center;justify-content:center;color:#999;font-size:13px;}
+
+  /* ===== 追従ヘッダー ===== */
+  .sticky-header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    min-height: var(--header-height);
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 2px 14px rgba(0,0,0,0.08);
+    padding: 8px 16px;
+    padding-top: calc(8px + env(safe-area-inset-top));
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transform: translateY(-120%);
+    transition: transform .35s cubic-bezier(.22,.61,.36,1);
+    pointer-events: none;
+  }
+  .sticky-header.is-visible{
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .sticky-header__label{
+    flex: 0 1 auto;
+    font-size: 11px;
+    line-height: 1.3;
+    color: #6b5d4f;
+    letter-spacing: .02em;
+  }
+  .sticky-header__label strong{
+    display: block;
+    color: var(--sample-brand-dark);
+    font-size: 13px;
+    letter-spacing: .04em;
+    margin-top: 2px;
+  }
+
+  .sticky-header__btns{
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sticky-header__btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 18px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: .06em;
+    border-radius: 999px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sticky-header__btn:active{
+    transform: scale(0.97);
+  }
+
+  .sticky-header__btn--primary{
+    background: var(--sample-brand);
+    color: var(--sample-text);
+    box-shadow: 0 3px 10px rgba(176,137,104,0.32);
+  }
+  .sticky-header__btn--primary:active{
+    background: var(--sample-brand-dark);
+  }
+  .sticky-header__btn--primary::after{
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-top: 2px solid #fff;
+    border-right: 2px solid #fff;
+    transform: rotate(45deg);
+    margin-left: 8px;
+  }
+
+  .sticky-header__btn--secondary{
+    background: #ffffff;
+    color: var(--sample-brand-dark);
+    border: 1.5px solid var(--sample-brand);
+  }
+  .sticky-header__btn--secondary:active{
+    background: var(--sample-brand-soft);
+  }
+
+  /* レスポンシブ：副CTA文言の出し分け */
+  .label-mb{ display: none; }
+
+  /* コンテンツがヘッダー下に隠れないよう上部余白 */
+  body.has-sticky-header{
+    padding-top: calc(var(--header-height) + env(safe-area-inset-top));
+  }
+
+  /* タブレット以下 */
+  @media (max-width: 640px){
+    .sticky-header{
+      padding: 6px 12px;
+      padding-top: calc(6px + env(safe-area-inset-top));
+      gap: 8px;
+      min-height: var(--header-height-mb);
+    }
+    .sticky-header__label{
+      font-size: 10px;
+    }
+    .sticky-header__label strong{
+      font-size: 12px;
+    }
+    .sticky-header__btn{
+      height: 40px;
+      padding: 0 14px;
+      font-size: 13px;
+      letter-spacing: .04em;
+    }
+    .sticky-header__btn--primary::after{
+      margin-left: 6px;
+      width: 6px;
+      height: 6px;
+    }
+    .label-pc{ display: none; }
+    .label-mb{ display: inline; }
+    body.has-sticky-header{
+      padding-top: calc(var(--header-height-mb) + env(safe-area-inset-top));
+    }
+  }
+
+  /* さらに狭い画面：ラベル消してボタンだけに */
+  @media (max-width: 400px){
+    .sticky-header__label{ display: none; }
+    .sticky-header__btn{
+      padding: 0 12px;
+      font-size: 12px;
+    }
+  }
+</style>
+</head>
+<body class="has-sticky-header">
+
+  <!-- ===== 追従ヘッダー ===== -->
+  <header class="sticky-header is-visible" id="stickyHeader" role="banner" aria-label="購入・詳細への導線">
+    <div class="sticky-header__label">
+      今だけ<strong>サンプルキット</strong>
+    </div>
+    <div class="sticky-header__btns">
+      <a
+        href="https://sample.com/?utm_source=survey-lp&utm_medium=sticky-header&utm_campaign=detail"
+        class="sticky-header__btn sticky-header__btn--secondary"
+        id="stickyHeaderDetail"
+        data-gtm="sticky-header-detail"
+      >
+        <span class="label-pc">もっと詳しく知りたい方はこちら</span>
+        <span class="label-mb">詳細はこちら</span>
+      </a>
+      <a
+        href="https://sample.com/?utm_source=survey-lp&utm_medium=sticky-header&utm_campaign=perfect-kit"
+        class="sticky-header__btn sticky-header__btn--primary"
+        id="stickyHeaderBuy"
+        data-gtm="sticky-header-purchase"
+      >
+        購入はこちら
+      </a>
+    </div>
+  </header>
+
+  <!-- ===== デモ用ダミーコンテンツ（本番では削除） ===== -->
+  <section class="demo-fv">
+    FV：アンケートLPヘッダー想定
+    <small>↑ 上の追従ヘッダーが画面上部に固定されます</small>
+  </section>
+  <section class="demo-section">
+    <h2>Q1. 普段のメイクの悩みは？</h2>
+    <p>（アンケートLP本体のダミー）</p>
+    <h2>Q2. ファンデーション選びで重視するポイントは？</h2>
+    <p>スクロールしてもヘッダーは画面上部に張り付きます。</p>
+    <h2>Q3. ベースメイクの使用順序は？</h2>
+    <p>……</p>
+    <h2>Q4. パウダーの質感の好み</h2>
+    <p>……</p>
+  </section>
+  <section class="demo-spacer">↓ スクロールしてもヘッダーが追従していることを確認 ↓</section>
+  <section class="demo-section">
+    <h2>Q5. さらに質問</h2>
+    <p>まだ追従しているはずです。</p>
+    <h2>Q6. 最後の質問</h2>
+    <p>ページ末尾でもヘッダーは画面上に残ります。</p>
+  </section>
+
+<script>
+(function(){
+  var header = document.getElementById('stickyHeader');
+  var buyBtn = document.getElementById('stickyHeaderBuy');
+  var detailBtn = document.getElementById('stickyHeaderDetail');
+  if(!header) return;
+
+  // 初期表示モード：'always'（常時）か 'scroll'（200pxで出現）
+  var MODE = 'always';
+  var SHOW_AT = 200;
+
+  if(MODE === 'always'){
+    header.classList.add('is-visible');
+    if(window.dataLayer){
+      window.dataLayer.push({event:'sticky_header_impression'});
+    }
+  } else {
+    header.classList.remove('is-visible');
+    var shown = false;
+    window.addEventListener('scroll', function(){
+      if(!shown && window.scrollY > SHOW_AT){
+        header.classList.add('is-visible');
+        shown = true;
+        if(window.dataLayer){
+          window.dataLayer.push({event:'sticky_header_impression'});
+        }
+      }
+    }, {passive:true});
+  }
+
+  // クリック計測：購入
+  if(buyBtn){
+    buyBtn.addEventListener('click', function(){
+      if(window.dataLayer){
+        window.dataLayer.push({event:'sticky_header_purchase_click'});
+      }
+    });
+  }
+  // クリック計測：詳細
+  if(detailBtn){
+    detailBtn.addEventListener('click', function(){
+      if(window.dataLayer){
+        window.dataLayer.push({event:'sticky_header_detail_click'});
+      }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
